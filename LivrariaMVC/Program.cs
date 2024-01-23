@@ -52,6 +52,7 @@ void ShowMenu()
         var rootConsulta = promptMenu.AddChoice("[blue]Consultas[/]");
         rootConsulta.AddChild("Consultar Livros");
         rootConsulta.AddChild("Consultar Usuários");
+        rootConsulta.AddChild("Consultar Empréstimos");
 
         var rootConfiguracao = promptMenu.AddChoice("[red]Configurações[/]");
         rootConfiguracao.AddChild("Sair");
@@ -78,6 +79,9 @@ void ShowMenu()
             case "Consultar Usuários":
                 ConsultarUsuarios();
                 break;
+            case "Consultar Empréstimos":
+                ConsultarEmprestimos();
+                break;
             case "Sair":
                 sair = true;
                 break;
@@ -95,7 +99,7 @@ void CadastrarUsuario()
     Usuario novoUsuario = new Usuario(nome, login, senha);
     usuarios.Add(novoUsuario);
 
-    AnsiConsole.Markup($"[green]Usuário cadastrado com sucesso![/]\n");
+    AnsiConsole.Markup($"[green]Usuário {nome} cadastrado com sucesso![/]\n");
 
     ApertarContinuar();
 }
@@ -110,7 +114,7 @@ void CadastrarLivro()
     Livros novoLivro = new Livros(nome, numeroPaginas, codigo, valor);
     biblioteca.Add(novoLivro);
 
-    AnsiConsole.Markup($"[green]Livro cadastrado com sucesso![/]\n");
+    AnsiConsole.Markup($"[green]Livro {nome} cadastrado com sucesso![/]\n");
 
     ApertarContinuar();
 }
@@ -155,7 +159,7 @@ void NovoEmprestimo()
             nomeLivro = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("Selecione um livro da lista para realizar o empréstimo: ")
                 .AddChoices(livrosEncontrados.Select(x => x.Livro)));
-            AnsiConsole.Markup($"O livro escolhido foi [green]{nomeLivro}.[/]");
+            AnsiConsole.Markup($"O livro escolhido foi [green]{nomeLivro}.[/]\n");
 
             Livros? livroEscolhido = biblioteca.Where(x => x.Livro == nomeLivro).FirstOrDefault();
 
@@ -213,7 +217,7 @@ void DevolverEmprestimo()
             nomeLivro = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title("Selecione um livro da lista para devolver: ")
                 .AddChoices(emprestimosEncontrados.Select(x => x.Livros.Livro)));
-            AnsiConsole.Markup($"O livro escolhido foi [green]{nomeLivro}.[/]");
+            AnsiConsole.Markup($"O livro escolhido foi [green]{nomeLivro}.[/]\n");
 
             Emprestimo? emprestimoEscolhido = emprestimos.Where(emprestimo => emprestimo.Usuario == usuarioEncontrado && emprestimo.Livros.Livro == nomeLivro).FirstOrDefault();
 
@@ -258,6 +262,21 @@ void ConsultarUsuarios()
 
     AnsiConsole.Write(tabelaUsuarios);
 
+    ApertarContinuar();
+}
+
+void ConsultarEmprestimos()
+{
+    var tabelaEmprestimos = new Table();
+    tabelaEmprestimos.AddColumns("Nome do Usuário", "Nome do Livro", "Data da Retirada", "Data da Devolução");
+
+    foreach (var emprestimo in emprestimos)
+    {
+        tabelaEmprestimos.AddRow(emprestimo.Usuario.Nome, emprestimo.Livros.Livro, emprestimo.Retirada.ToString("dd/MM/yyyy"), emprestimo.Devolucao.ToString("dd/MM/yyyy"));
+    }
+
+    AnsiConsole.Write(tabelaEmprestimos); 
+    
     ApertarContinuar();
 }
 
