@@ -1,2 +1,2 @@
 # MVC
-## Projeto criado durante as aulas do ACELERA .NET da Atos.
+Projeto criado durante as aulas do ACELERA .NET da Atos.
